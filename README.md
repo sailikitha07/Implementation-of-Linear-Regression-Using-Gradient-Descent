@@ -28,39 +28,47 @@ Program to implement the linear regression using gradient descent.
 Developed by: cholimgapuram sai likitha
 RegisterNumber: 212224230046
 /*
-
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-data = pd.read_csv("Startup.csv")
-X = data['R&D Spend'].values
-y = data['Profit'].values
-X = (X - X.mean()) / X.std()
-m = 0
-b = 0
-learning_rate = 0.01
-epochs = 1000
-n = len(X)
-for i in range(epochs):
-    y_pred = m * X + b
-    dm = (-2/n) * np.sum(X * (y - y_pred))
-    db = (-2/n) * np.sum(y - y_pred)
-    m = m - learning_rate * dm
-    b = b - learning_rate * db
-print("Slope (m):", m)
-print("Intercept (b):", b)
-y_pred = m * X + b
-plt.scatter(X, y)
-plt.plot(X, y_pred)
-plt.xlabel("R&D Spend (Normalized)")
-plt.ylabel("Profit")
-plt.title("Gradient Descent on 50_Startups Dataset")
-plt.show()
+from sklearn.preprocessing import StandardScaler
+def linear_regression(X1, y, learning_rate=0.1, num_iters=1000):
+    X = np.c_[np.ones(len(X1)), X1]
+    theta = np.zeros((X.shape[1], 1))
+    m = len(X1)
+    for _ in range(num_iters):
+        predictions = X.dot(theta)
+        errors = predictions - y
+        theta -= learning_rate * (1 / m) * X.T.dot(errors)
+    return theta
+data = pd.read_csv("50_Startups (1).csv")
+print("Dataset:")
+print(data.head())
+X = data.iloc[:, :-2].values.astype(float)
+y = data.iloc[:, -1].values.reshape(-1, 1)
+X_scaler = StandardScaler()
+y_scaler = StandardScaler()
+X_scaled = X_scaler.fit_transform(X)
+y_scaled = y_scaler.fit_transform(y)
+print("\nScaled Features:")
+print(X_scaled)
+theta = linear_regression(X_scaled, y_scaled)
+print("\nTheta Values:")
+print(theta)
+new_data = np.array([[165349.2, 136897.8, 471784.1]])
+new_scaled = X_scaler.transform(new_data)
+new_scaled = np.c_[np.ones(len(new_scaled)), new_scaled]
+prediction_scaled = new_scaled.dot(theta)
+prediction = y_scaler.inverse_transform(prediction_scaled)
+print("\nScaled Prediction:")
+print(prediction_scaled)
+print("\nPredicted Profit:")
+print(prediction[0][0])
 
 ```
 
 ## Output:
-<img width="623" height="470" alt="image" src="https://github.com/user-attachments/assets/ca4853ff-6210-4824-9889-d82fc34b4066" />
+<img width="477" height="1023" alt="image" src="https://github.com/user-attachments/assets/d9c0d7e4-4429-4142-8a26-a5ce84e276eb" />
+
 
 
 
